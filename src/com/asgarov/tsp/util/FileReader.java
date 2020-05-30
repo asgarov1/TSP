@@ -1,8 +1,6 @@
-package com.asgarov.util;
+package com.asgarov.tsp.util;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;

@@ -1,4 +1,4 @@
-package com.asgarov.tsp;
+package com.asgarov.tsp.map;
 
 public class City {
     private double x;

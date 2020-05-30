@@ -1,6 +1,6 @@
-package com.asgarov.util;
+package com.asgarov.tsp.util;
 
-import com.asgarov.tsp.City;
+import com.asgarov.tsp.map.City;
 
 public class ArrayUtil {
     public static City[] copyArray(City[] cities) {

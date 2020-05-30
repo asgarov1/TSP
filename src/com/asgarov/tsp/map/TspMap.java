@@ -1,19 +1,20 @@
-package com.asgarov.tsp;
+package com.asgarov.tsp.map;
 
-import com.asgarov.util.FileReader;
+import com.asgarov.tsp.util.ArrayUtil;
+import com.asgarov.tsp.util.FileReader;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.BiConsumer;
 
-import static com.asgarov.util.ArrayUtil.copyArray;
+import static com.asgarov.tsp.util.ArrayUtil.copyArray;
 
 public class TspMap {
 
     private static int count;
     private double shortestDistance;
+    private int calculationTime;
     private City[] shortestRoute;
     private City[] cities;
     private final Map<City, Map<City, Double>> distances = new HashMap<>();
@@ -76,10 +77,6 @@ public class TspMap {
         }
     }
 
-    public void displayAllRoutes() {
-        permute(cities, cities.length);
-    }
-
     private void swap(City[] cities, int indexA, int indexB) {
         City temp = cities[indexA];
         cities[indexA] = cities[indexB];
@@ -137,8 +134,58 @@ public class TspMap {
         System.out.println("| distance: " + calculateDistance(cities));
     }
 
+    public void shortestRoute(Runnable runnable) {
+        long start = System.nanoTime();
+        runnable.run();
+        long finish = System.nanoTime();
+        long timeElapsed = finish - start;
 
-//  Getters
+        System.out.print("Shortest route: ");
+        ArrayUtil.printArray(getShortestRoute());
+        System.out.print("| distance: " + getShortestDistance());
+        System.out.printf("| time: %,d ns", timeElapsed);
+    }
+
+    public void shortestRouteViaNearestNeighbour() {
+        shortestRoute(this::nearestNeighbour);
+    }
+
+    public void shortestRouteViaEnumeration() {
+        shortestRoute(() -> permute(cities, cities.length));
+    }
+
+    public void nearestNeighbour() {
+        List<City> citiesStack = citiesLeft();
+
+        City[] finalRoute = new City[cities.length];
+        finalRoute[0] = cities[0];
+        for (int i = 1; i < finalRoute.length; i++) {
+            int index = 0;
+            double shortestDistance = distanceBetween(finalRoute[i - 1], citiesStack.get(0));
+            for (int j = 0; j < citiesStack.size(); j++) {
+                double distance = distanceBetween(finalRoute[i - 1], citiesStack.get(j));
+                if (distance < shortestDistance) {
+                    index = j;
+                    shortestDistance = distance;
+                }
+            }
+            City city = citiesStack.get(index);
+            citiesStack.remove(city);
+            finalRoute[i] = city;
+        }
+        shortestRoute = turnPermutationIntoCircularRoute(finalRoute);
+        shortestDistance = calculateDistance(shortestRoute);
+    }
+
+    private List<City> citiesLeft() {
+        List<City> citiesStack = new ArrayList<>();
+        for (int i = 1; i < cities.length; i++) {
+            citiesStack.add(cities[i]);
+        }
+        return citiesStack;
+    }
+
+    //  Getters
     public double getShortestDistance() {
         return shortestDistance;
     }

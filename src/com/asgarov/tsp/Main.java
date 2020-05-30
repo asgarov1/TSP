@@ -1,6 +1,6 @@
 package com.asgarov.tsp;
 
-import com.asgarov.util.ArrayUtil;
+import com.asgarov.tsp.map.TspMap;
 
 public class Main {
     public static void main(String[] args) {
@@ -9,11 +9,10 @@ public class Main {
         map.displayMatrix();
         System.out.println();
 
-        map.displayAllRoutes();
-        System.out.println();
+        map.shortestRouteViaEnumeration();
 
-        System.out.print("Shortest route: ");
-        ArrayUtil.printArray(map.getShortestRoute());
-        System.out.println("| distance: " + map.getShortestDistance());
+        System.out.println();
+        map.shortestRouteViaNearestNeighbour();
+
     }
 }
