@@ -6,13 +6,12 @@ execute the program with -e|-n <nameOfFile.txt>
 
 File should have the first line with the number of entries to read, and the rest of the lines contain C and Y coordinates in the following format:
 
-File:
-5
-1.0 1.0
-5.5 0.9
-3.0 1.5
-0.5 4.3
-4.0 3.0
+5<br>
+1.0 1.0<br>
+5.5 0.9<br>
+3.0 1.5<br>
+0.5 4.3<br>
+4.0 3.0<br>
 
 -e will execute complete enumeration (brute forcing through all the routes)
 -n will execute nearest-neighbour algorithm
