@@ -1,5 +1,8 @@
 package com.asgarov.tsp.map;
 
+/**
+ * City DTO
+ */
 public class City {
     private double x;
     private double y;
