@@ -6,7 +6,9 @@ import com.asgarov.tsp.util.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.asgarov.tsp.util.CityArrayUtil.copyArray;
 
@@ -32,8 +34,12 @@ public class TspMap {
     private City[] cities;
 
     /**
+     * A Hashmap saving for each city another hashmap of other cities and distances to each
+     */
+    private final Map<City, Map<City, Double>> distances = new HashMap<>();
+
+    /**
      * Constructor
-     *
      * @param fileName requires the file to load the map from
      */
     public TspMap(String fileName) {
@@ -44,7 +50,6 @@ public class TspMap {
      * loads the map from the file
      * creates the array of cities with the coordinates
      * each city is given a capital letter name starting from A for easier representation
-     *
      * @param fileName
      */
     private void loadMap(String fileName) {
@@ -65,6 +70,22 @@ public class TspMap {
         for (City city : cities) {
             city.setName("" + (char) ASCII_A++);
         }
+
+        saveDistances(cities);
+    }
+
+    /**
+     * For better performance distances between cities are saved so that they don't have to be repeatedly calculated
+     * @param cities
+     */
+    private void saveDistances(City[] cities) {
+        for (City city : cities) {
+            Map<City, Double> temp = new HashMap<>();
+            for (City c : cities) {
+                temp.put(c, distanceBetween(city, c));
+            }
+            distances.put(city, temp);
+        }
     }
 
     /**
@@ -82,7 +103,7 @@ public class TspMap {
         for (City city : cities) {
             System.out.print(" " + city.getName() + " |" + " ");
             for (City c : cities) {
-                System.out.printf("%.1f | ", distanceBetween(city, c));
+                System.out.printf("%.1f | ", distances.get(city).get(c));
             }
             System.out.println();
         }
@@ -91,7 +112,6 @@ public class TspMap {
     /**
      * switches the cities in an array
      * helper method for the heap's algorithm
-     *
      * @param cities
      * @param indexA
      * @param indexB
@@ -105,16 +125,15 @@ public class TspMap {
     /**
      * generates permutations using Heap's algorithm
      * when a permutation is generated it is turned into a route
-     *
      * @param cities
-     * @param n      - required for recursive call
+     * @param n - required for recursive call
      */
     public void permute(City[] cities, int n) {
         if (n == 1) {
             City[] route = turnPermutationIntoCircularRoute(cities);
             saveIfBestRoute(route);
-//            comment if you don't want the list of routes to be printed
-            printRoute(route);
+//            uncomment to show the list of routes to be printed
+//            printRoute(route);
         } else {
             for (int i = 0; i < n; i++) {
                 permute(cities, n - 1);
@@ -129,7 +148,6 @@ public class TspMap {
 
     /**
      * Adds the first city to the end in order to turn the permutation into a circle
-     *
      * @param permutation
      * @return
      */
@@ -144,7 +162,6 @@ public class TspMap {
 
     /**
      * Checks whether the route has the shortest distance so far and if so saves it
-     *
      * @param route
      */
     private void saveIfBestRoute(City[] route) {
@@ -158,21 +175,19 @@ public class TspMap {
 
     /**
      * Calculates complete distance between the cities on route
-     *
      * @param route
      * @return
      */
     private double calculateDistance(City[] route) {
         double distance = 0;
         for (int i = 0; i < route.length - 1; i++) {
-            distance += distanceBetween(route[i], route[i + 1]);
+            distance += distances.get(route[i]).get(route[i + 1]);
         }
         return distance;
     }
 
     /**
      * calculates the distance between 2 cities using the Pythagorean algorithm
-     *
      * @param a
      * @param b
      * @return
@@ -183,7 +198,6 @@ public class TspMap {
 
     /**
      * prints the route with distance shown
-     *
      * @param cities
      */
     public void printRoute(City[] cities) {
@@ -198,7 +212,6 @@ public class TspMap {
      * This method is used independent whether nearest neighbour heuristic or enumeration was chosen
      * in either case the correct function is passed as a parameter into this method.
      * This function measures the time that the calculate took and display the result, distance and time
-     *
      * @param runnable - a functional interface that takes no parameters and returns nothing allowing me
      *                 to pass functions as parameters
      */
@@ -241,9 +254,9 @@ public class TspMap {
         finalRoute[0] = cities[0];
         for (int i = 1; i < finalRoute.length; i++) {
             int index = 0;
-            double shortestDistance = distanceBetween(finalRoute[i - 1], citiesStack.get(0));
+            double shortestDistance = distances.get(finalRoute[i - 1]).get(citiesStack.get(0));
             for (int j = 0; j < citiesStack.size(); j++) {
-                double distance = distanceBetween(finalRoute[i - 1], citiesStack.get(j));
+                double distance = distances.get(finalRoute[i - 1]).get(citiesStack.get(j));
                 if (distance < shortestDistance) {
                     index = j;
                     shortestDistance = distance;
@@ -260,7 +273,6 @@ public class TspMap {
     /**
      * return the list of cities left for the route
      * the first one (with index 0) is left out as it is a starting point already picked for final route
-     *
      * @return
      */
     private List<City> citiesLeft() {
