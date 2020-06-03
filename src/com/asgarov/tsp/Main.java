@@ -6,6 +6,7 @@ public class Main {
     public static void main(String[] args) {
         TspMap map = new TspMap(args[1]);
 
+        System.out.println();
         map.displayMatrix();
         System.out.println();
 

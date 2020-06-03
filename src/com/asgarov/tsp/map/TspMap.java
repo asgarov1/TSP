@@ -14,12 +14,12 @@ import static com.asgarov.tsp.util.CityArrayUtil.copyArray;
 
 public class TspMap {
     /**
-     * count is used to display the number of permutation if these are displayed
+     * count is used to display the number of permutations if these are displayed
      */
     private static int count;
 
     /**
-     * variable used to store shortest distance
+     * variable used to store the shortest distance
      */
     private double shortestDistance;
 
@@ -29,7 +29,7 @@ public class TspMap {
     private City[] shortestRoute;
 
     /**
-     * Array of initial cities, also changed during the permutations generation for the complete enumeration
+     * Array of the initial cities, also changed during the permutations' generation for the complete enumeration
      */
     private City[] cities;
 
@@ -75,7 +75,7 @@ public class TspMap {
     }
 
     /**
-     * For better performance distances between cities are saved so that they don't have to be repeatedly calculated
+     * For better performance distances between the cities are saved so that they don't have to be repeatedly calculated
      * @param cities
      */
     private void saveDistances(City[] cities) {
@@ -147,7 +147,7 @@ public class TspMap {
     }
 
     /**
-     * Adds the first city to the end in order to turn the permutation into a circle
+     * Adds the first city to the end in order to turn the permutation into a circular route
      * @param permutation
      * @return
      */
@@ -161,7 +161,7 @@ public class TspMap {
     }
 
     /**
-     * Checks whether the route has the shortest distance so far and if so saves it
+     * Checks whether the route has the shortest distance so far and if that's the case saves it
      * @param route
      */
     private void saveIfBestRoute(City[] route) {
@@ -174,7 +174,7 @@ public class TspMap {
     }
 
     /**
-     * Calculates complete distance between the cities on route
+     * Calculates complete distance between the cities on provided route
      * @param route
      * @return
      */
@@ -197,7 +197,7 @@ public class TspMap {
     }
 
     /**
-     * prints the route with distance shown
+     * prints the route with the distance shown
      * @param cities
      */
     public void printRoute(City[] cities) {
@@ -209,9 +209,9 @@ public class TspMap {
     }
 
     /**
-     * This method is used independent whether nearest neighbour heuristic or enumeration was chosen
-     * in either case the correct function is passed as a parameter into this method.
-     * This function measures the time that the calculate took and display the result, distance and time
+     * This method is used independent from whether nearest neighbour heuristic or enumeration was chosen.
+     * In either case the correct function is passed as a parameter into this method.
+     * This method measures the time that the calculate took and display the result, distance and time
      * @param runnable - a functional interface that takes no parameters and returns nothing allowing me
      *                 to pass functions as parameters
      */
@@ -224,7 +224,7 @@ public class TspMap {
         System.out.print("Shortest route: ");
         CityArrayUtil.printArray(getShortestRoute());
         System.out.print("| distance: " + getShortestDistance());
-        System.out.printf("| time: %,d ns", timeElapsed);
+        System.out.printf(" | time: %,d ns", timeElapsed);
     }
 
     /**
@@ -242,10 +242,11 @@ public class TspMap {
     }
 
     /**
-     * Actual function that calculated all the logic of nearest neighbour algorithm
+     * Actual function that calculates all the logic of nearest neighbour algorithm
      * Starts by creating a stack of cities left
-     * From them it one by one calculates the nearest and chooses it for the route and removes it from the stack of cities left
-     * After calculation is finished the array of the cities is saved as shortest route and shortest distance
+     * From them it one by one calculates the nearest and chooses it for the route and removes it from the stack
+     * of cities left (for better performance)
+     * After calculation is finished the array of the cities is saved as the shortest route and shortest distance is saved as well
      */
     public void nearestNeighbour() {
         List<City> citiesStack = citiesLeft();
